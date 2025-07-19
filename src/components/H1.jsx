@@ -1,0 +1,1 @@
+export const H1 = ({ children }) => <h1 className="font-extrabold text-2xl md:text-3xl">{ children }</h1>
