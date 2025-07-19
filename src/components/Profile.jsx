@@ -12,6 +12,7 @@ export const Profile = ({ user, me, setUser, setMyData }) => {
 	const [loading, setLoading] = useState(false)
 	const [editorOpen, setEditorOpen] = useState(false)
 	const [postOpen, setPostOpen] = useState(false)
+	const [isFollowLoading, setIsFollowLoading] = useState(false)
 
 	const isMyProfile = !!me
 	const following = user?.imFollowing
@@ -26,10 +27,12 @@ export const Profile = ({ user, me, setUser, setMyData }) => {
 	}, [])
 
 	const handleFollow = async () => {
-		if (isMyProfile) return
+		if (isMyProfile || isFollowLoading) return
+		setIsFollowLoading(true)
+
+		const newFollowState = !following
 
 		// Optimistic update
-		const newFollowState = !following
 		setUser((p) => ({
 			...p,
 			imFollowing: newFollowState,
@@ -54,6 +57,8 @@ export const Profile = ({ user, me, setUser, setMyData }) => {
 				...p,
 				following: following ? p.following + 1 : p.following - 1,
 			}))
+		} finally {
+			setIsFollowLoading(false)
 		}
 	}
 
@@ -104,10 +109,12 @@ export const Profile = ({ user, me, setUser, setMyData }) => {
 							if (isMyProfile) return setPostOpen(true)
 							return handleFollow()
 						}}
-						className="bg-primary rounded py-2 px-3 text-white"
+						disabled={isFollowLoading}
+						className={`bg-primary rounded py-2 px-3 text-white transition duration-200 ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
 					>
 						{isMyProfile ? 'NEW POST' : following ? 'FOLLOWING' : 'FOLLOW'}
 					</button>
+
 					<button
 						onClick={() => {
 							if (isMyProfile) return setEditorOpen(true)
