@@ -13,6 +13,13 @@ import axios from '../lib/axios.js'
 import { Link } from 'react-router-dom'
 import { useAppContext } from '../store/AppContext'
 
+
+
+
+
+
+
+
 export const PostCard = ({ post = {}, me, isCmmnt = false, setEditingPost }) => {
 	const { setPreviewImg } = useAppContext()
 	const [comment, setComment] = useState('')
@@ -54,24 +61,33 @@ export const PostCard = ({ post = {}, me, isCmmnt = false, setEditingPost }) => 
 
 	const handleLike = async () => {
 		if (liked) return
+
+		// Optimistic like
+		setLiked(true)
+		setLikes(p => p + 1)
+
 		try {
 			await axios.post(`/post/like`, { postId: _id })
-			setLiked(true)
-			setLikes((p) => p + 1)
-			try {
-				await axios.post('/post/viewHistory', { postId: _id })
-			} catch (_) {}
+			await axios.post('/post/viewHistory', { postId: _id })
 		} catch (e) {
+			// Revert if error
+			setLiked(false)
+			setLikes(p => p - 1)
 			toast.error(e?.response?.data?.msg || 'Something went wrong')
 		}
 	}
 
 	const handleDelete = async () => {
 		if (!isMyPost) return
+
+		// Optimistically hide post
+		setIsDeleted(true)
+
 		try {
 			await axios.delete(`/post/post`, { data: { postId: _id } })
-			setIsDeleted(true)
 		} catch (e) {
+			// Revert if delete failed
+			setIsDeleted(false)
 			toast.error(e?.response?.data?.msg || 'Something went wrong')
 		}
 	}
@@ -102,8 +118,6 @@ export const PostCard = ({ post = {}, me, isCmmnt = false, setEditingPost }) => 
 		}
 	}, [hasBeenVisibleFor15s, _id])
 
-
-
 	const handleShare = () => {
 		const data = {
 			title: 'Check this out!',
@@ -111,7 +125,7 @@ export const PostCard = ({ post = {}, me, isCmmnt = false, setEditingPost }) => 
 			url: `https://temvi.netlify.app/post/${_id}`
 		}
 		
-		navigator.share(data)
+		navigator.share(data).catch(() => toast.error("Sharing not supported"))
 	}
 
 	return (

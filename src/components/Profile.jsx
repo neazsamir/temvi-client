@@ -7,15 +7,15 @@ import { CreatePost } from './CreatePost'
 import { useAppContext } from '../store/AppContext'
 import { formatNumber } from '../utils/formatNumber.js'
 
-
 export const Profile = ({ user, me, setUser, setMyData }) => {
-	const { previewImg:showAvatar, setPreviewImg:setShowAvatar } = useAppContext()
+	const { previewImg: showAvatar, setPreviewImg: setShowAvatar } = useAppContext()
 	const [loading, setLoading] = useState(false)
 	const [editorOpen, setEditorOpen] = useState(false)
 	const [postOpen, setPostOpen] = useState(false)
 
 	const isMyProfile = !!me
-	let following = user?.imFollowing
+	const following = user?.imFollowing
+	const hidden = user?.hidden
 
 	useEffect(() => {
 		const escHandler = (e) => {
@@ -26,34 +26,49 @@ export const Profile = ({ user, me, setUser, setMyData }) => {
 	}, [])
 
 	const handleFollow = async () => {
-		setLoading(true)
 		if (isMyProfile) return
+
+		// Optimistic update
+		const newFollowState = !following
+		setUser((p) => ({
+			...p,
+			imFollowing: newFollowState,
+			followers: newFollowState ? p.followers + 1 : p.followers - 1,
+		}))
+		setMyData((p) => ({
+			...p,
+			following: newFollowState ? p.following + 1 : p.following - 1,
+		}))
+
 		try {
-			const result = await toggleFollow(user?.username, following) || false
-			if (result) {
-				setUser((p) => ({
-					...p,
-					imFollowing: !following,
-					followers: !following ? p.followers + 1 : p.followers - 1,
-				}))
-				setMyData((p) => ({
-					...p,
-					following: !following ? p.following + 1 : p.following - 1,
-				}))
-			}
-		} finally {
-			setLoading(false)
+			const result = await toggleFollow(user?.username, following)
+			if (!result) throw new Error()
+		} catch (err) {
+			// Revert if failed
+			setUser((p) => ({
+				...p,
+				imFollowing: following,
+				followers: following ? p.followers + 1 : p.followers - 1,
+			}))
+			setMyData((p) => ({
+				...p,
+				following: following ? p.following + 1 : p.following - 1,
+			}))
 		}
 	}
 
 	const handleHide = async () => {
-		setLoading(true)
 		if (isMyProfile) return
+
+		const newHiddenState = !hidden
+		setUser((p) => ({ ...p, hidden: newHiddenState }))
+
 		try {
-			const result = await toggleHideUser(user?._id) || false
-			if (result) setUser((p) => ({ ...p, hidden: !p.hidden }))
-		} finally {
-			setLoading(false)
+			const result = await toggleHideUser(user?._id)
+			if (!result) throw new Error()
+		} catch (err) {
+			// Revert if failed
+			setUser((p) => ({ ...p, hidden }))
 		}
 	}
 
@@ -100,7 +115,7 @@ export const Profile = ({ user, me, setUser, setMyData }) => {
 						}}
 						className="rounded bg-dark2 py-2 px-3 min-w-[120px] truncate"
 					>
-						{isMyProfile ? 'EDIT PROFILE' : user.hidden ? 'UNHIDE USER' : 'HIDE USER'}
+						{isMyProfile ? 'EDIT PROFILE' : hidden ? 'UNHIDE USER' : 'HIDE USER'}
 					</button>
 				</div>
 			</div>
