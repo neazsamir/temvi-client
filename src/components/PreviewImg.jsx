@@ -17,7 +17,7 @@ export const PreviewImg = () => {
 				>
 					<img
 						src={previewImg}
-						alt="Full Avatar"
+						alt="Full view"
 						onClick={(e) => e.stopPropagation()}
 						className="max-w-full max-h-full rounded-xl shadow-lg"
 					/>

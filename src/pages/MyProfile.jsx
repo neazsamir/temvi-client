@@ -15,7 +15,7 @@ export const MyProfile = () => {
 			<Profile user={user} setUser={setUser} me={true} following={false} />
 			<Container className='flex flex-col md:flex-row md:gap-4 md:mt-4'>
 				<div className="bg-white md:rounded-xl p-4 md:min-w-[40%] md:max-w-[40%] h-fit md:shadow-even-0">
-					<ProfileIntro bio={user?.bio} username={user?.username} />
+					<ProfileIntro bio={user?.bio} username={user?.username} vibes={user?.vibes} />
 				</div>
 				<div className="md:grow">
 					{/* Clickable prompt opens CreatePost */}

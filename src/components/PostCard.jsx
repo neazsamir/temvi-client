@@ -148,7 +148,7 @@ export const PostCard = ({ post = {}, me, isCmmnt = false, setEditingPost }) => 
 					</div>
 				)}
 			</div>
-			<p className="mt-4 mb-3 px-4 break-words">{text}</p>
+			<pre className="mt-4 mb-3 px-4 break-words whitespace-pre-wrap font-sans">{text}</pre>
 			<div className={`column-gap-0 gap-1 space-y-1 ${images?.length === 1 ? 'columns-1' : 'columns-2'}`}>
 				{images?.map((img, i) => (
 					<img onClick={() => setPreviewImg(img)} key={i} src={img} />

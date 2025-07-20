@@ -45,7 +45,7 @@ export const UserProfile = () => {
 			<Profile user={user} setMyData={setMyData} me={myData?.username === user?.username} setUser={setUser} />
 			<Container className='flex flex-col md:flex-row md:gap-4 md:mt-4'>
 			 <div className="bg-white md:rounded-xl p-4 md:min-w-[40%] md:max-w-[40%] shadow-even-0 h-fit">
-				<ProfileIntro bio={user?.bio} username={user?.username} />
+				<ProfileIntro bio={user?.bio} username={user?.username} vibes={user?.vibes} />
 			 </div>
 			 <div className="md:p-4 md:pt-0 md:max-h-screen md:overflow-y-auto w-full">
 				<UserPosts username={user?.username} />
