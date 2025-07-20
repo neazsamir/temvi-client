@@ -7,7 +7,8 @@ export const Notifications = ({ open, setOpen, user, setUser }) => {
 	const navigate = useNavigate();
 	const notifications = user.notifications || [];
 
-	const handleDelete = async (notificationId) => {
+	const handleDelete = async (e, notificationId) => {
+		e.stopPropagation()
 		try {
 			await axios.delete('/app/notification', {
 				data: { notificationId },
@@ -45,7 +46,7 @@ export const Notifications = ({ open, setOpen, user, setUser }) => {
 
 								<FaXmark
 									className="text-black hover:text-red-500 cursor-pointer mt-1"
-									onClick={() => handleDelete(n._id)}
+									onClick={(e) => handleDelete(e, n._id)}
 								/>
 							</div>
 						))

@@ -17,6 +17,7 @@ export const Feed = ({ user }) => {
 		return data  
 	}  
 	
+	
 	const {  
 		data,  
 		isLoading,  

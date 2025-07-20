@@ -45,8 +45,8 @@ export const ProfileIntro = ({ bio, username, vibes = [] }) => {
 	  </div>
 	   <div className="flex flex-wrap items-center gap-2.5 my-5 w-full">
 	  	 {
-	  		vibes?.length > 0 ? vibes.map(v => (
-	  			<span className="bg-dark2 px-3 py-2 rounded-full hover:text-white hover:bg-primary transition duration-300 ease-in font-bold uppercase text-sm">
+	  		vibes?.length > 0 ? vibes.map((v, i) => (
+	  			<span key={i} className="bg-dark2 px-3 py-2 rounded-full hover:text-white hover:bg-primary transition duration-300 ease-in font-bold uppercase text-sm">
 	  				{ v }
 	  			</span>
 	  		)) : <p className="font-bold text-base text-center w-full text-dark">Vibes not added</p>
